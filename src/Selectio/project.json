@@ -1,4 +1,4 @@
-﻿{
+{
   "userSecretsId": "aspnet-Selectio-81028fc9-3cf8-4781-99e2-8b96eb1a497a",
 
   "dependencies": {
@@ -41,10 +41,11 @@
       "version": "1.0.0-preview2-final",
       "type": "build"
     },
-    "Microsoft.VisualStudio.Web.CodeGenerators.Mvc":  {
+    "Microsoft.VisualStudio.Web.CodeGenerators.Mvc": {
       "version": "1.0.0-preview2-final",
       "type": "build"
-    }
+    },
+    "System.Linq": "4.1.0"
   },
 
   "tools": {
