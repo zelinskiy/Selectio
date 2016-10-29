@@ -10,6 +10,10 @@ namespace Selectio.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+
+        public DbSet<SqlTask> SqlTasks { get; set; }
+        public DbSet<SqlSolving> SqlSolvings { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
