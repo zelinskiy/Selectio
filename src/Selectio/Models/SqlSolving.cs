@@ -10,6 +10,8 @@ namespace Selectio.Models
     {
         public int Id { get; set; }
 
+        public int SqlTaskId { get; set; }
+
         [Required]
         public string ApplicationUserId { get; set; }
 
@@ -17,7 +19,7 @@ namespace Selectio.Models
         public string Solving { get; set; }
 
         [Required]
-        public string SolvingOutput { get; set; }
+        public DateTime SolvedAt { get; set; }
 
         [Required]
         public bool IsCorrect { get; set; }

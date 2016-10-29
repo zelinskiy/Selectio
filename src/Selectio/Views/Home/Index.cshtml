@@ -2,5 +2,8 @@
     ViewData["Title"] = "Home Page";
 }
 
-<p><a asp-controller="SqlTasks" asp-action="Index">ALL TASKS</a></p>
-<p><a asp-controller="SqlTasks" asp-action="Create">NEW TASK</a></p>
+<p><a asp-controller="SqlTasks" asp-action="Index">View Tasks as Teacher</a></p>
+<p><a asp-controller="SqlTasks" asp-action="Create">New Task (as Teacher)</a></p>
+<p><a asp-controller="SqlSolving" asp-action="Index">View Tasks as Student</a></p>
+<p><a asp-controller="SqlSolving" asp-action="AllSolvings">View All Solvings (as Teacher)</a></p>
+<p><a asp-controller="SqlSolving" asp-action="AllSolvings">View My Solvings (as Student)</a></p>

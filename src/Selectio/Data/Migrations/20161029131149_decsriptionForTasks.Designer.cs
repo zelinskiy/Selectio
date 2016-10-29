@@ -8,9 +8,10 @@ using Selectio.Data;
 namespace Selectio.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161029131149_decsriptionForTasks")]
+    partial class decsriptionForTasks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.1")
@@ -186,8 +187,6 @@ namespace Selectio.Data.Migrations
 
                     b.Property<string>("Solving")
                         .IsRequired();
-
-                    b.Property<int>("SqlTaskId");
 
                     b.HasKey("Id");
 

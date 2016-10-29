@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 
 namespace Selectio.Models.SqlTasksViewModels
 {
-    public class CreateViewModel
+    public class TaskViewModel
     {
+        [Required]
+        public string Name { get; set; }
+
+        [Required]
+        public string Description { get; set; }
+
         [Required]
         public string Creates { get; set; }
 

@@ -38,19 +38,19 @@ namespace Selectio.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View(new CreateViewModel());
+            return View(new TaskViewModel());
         }
 
         [HttpPost]
-        public IActionResult Create(CreateViewModel CreateViewModel)
+        public IActionResult Create(TaskViewModel model)
         {
             var sep = "\n\n\n";
             string output = "";
-            var completeQuery = CreateViewModel.Creates
+            var completeQuery = model.Creates
                                 + sep
-                                + CreateViewModel.Inserts
+                                + model.Inserts
                                 + sep
-                                + CreateViewModel.Solving;
+                                + model.Solving;
 
             var succeed = _sandboxService.TryExecuteQuery(completeQuery, ref output);
             _sandboxService.FlushDatabase();
@@ -58,10 +58,12 @@ namespace Selectio.Controllers
             {
                 var newSqlTask = new SqlTask
                 {
-                    Creates = CreateViewModel.Creates,
-                    Inserts = CreateViewModel.Inserts,
-                    Solving = CreateViewModel.Solving,
-                    IsWriteAction = CreateViewModel.IsWriteAction,
+                    Name = model.Name,
+                    Description = model.Description,
+                    Creates = model.Creates,
+                    Inserts = model.Inserts,
+                    Solving = model.Solving,
+                    IsWriteAction = model.IsWriteAction,
                     SolvingOutput = output
                 };
 
@@ -72,7 +74,7 @@ namespace Selectio.Controllers
             else
             {
                 ModelState.AddModelError("sql", output);
-                return View(CreateViewModel);
+                return View(model);
             }
         }
 
