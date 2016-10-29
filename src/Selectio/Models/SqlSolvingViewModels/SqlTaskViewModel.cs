@@ -11,5 +11,6 @@ namespace Selectio.Models.SqlSolvingViewModels
         public string Name { get; set; }
         public string Description { get; set; }
         public bool IsSolved { get; set; }
+        public int SolvingsCount { get; set; }
     }
 }

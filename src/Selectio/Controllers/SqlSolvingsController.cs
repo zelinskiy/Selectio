@@ -53,6 +53,12 @@ namespace Selectio.Controllers
                 .Where(s => s.ApplicationUserId == Me.Id && s.IsCorrect)
                 .Select(s => s.SqlTaskId)
                 .ToArray();
+            var solvedTasksIds = _context.SqlSolvings
+                .Where(s=>s.IsCorrect)
+                .GroupBy(s => new Tuple<int, string>(s.SqlTaskId, s.ApplicationUserId))
+                .Select(g => g.First())
+                .Select(s => s.SqlTaskId)
+                .ToArray();
 
             var model = _context.SqlTasks.Select(t => new SqlTaskViewModel
                 {
@@ -65,6 +71,7 @@ namespace Selectio.Controllers
             foreach (var t in model)
             {
                 t.IsSolved = mySolvedTasksIds.Contains(t.Id);
+                t.SolvingsCount = solvedTasksIds.Count(i=>i==t.Id);
             }
             
             return View(model);

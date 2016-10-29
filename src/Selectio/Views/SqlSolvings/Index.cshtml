@@ -14,14 +14,17 @@
 {
     <li>
         <a asp-controller="SqlSolvings" asp-action="Create" asp-route-id="@t.Id">
+
             @if (t.IsSolved)
             {
-                <span class="text-success">@t.Name</span>
+                <span class="text-success"> solved! </span>
             }
             else
             {
-                <span class="text-danger">@t.Name</span>
+                <span class="text-danger"> not solved!</span>
             }
+
+            @t.Name (solved @t.SolvingsCount times)
         </a>
     </li>
 }
