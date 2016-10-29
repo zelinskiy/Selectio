@@ -13,6 +13,7 @@ namespace Selectio.Data
 
         public DbSet<SqlTask> SqlTasks { get; set; }
         public DbSet<SqlSolving> SqlSolvings { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

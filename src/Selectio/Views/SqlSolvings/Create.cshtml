@@ -1,21 +1,28 @@
 @model Selectio.Models.SqlSolvingViewModels.SolvingViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "New Solving";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Solving</h2>
+<h2>@Model.Name</h2>
 
-<p><b>Task:</b> @Model.Name</p>
 <p>@Html.Raw(Model.Description.Replace(Environment.NewLine, "<br/>"))</p>
 <hr/>
-<p>@Html.Raw(Model.Creates.Replace(Environment.NewLine, "<br/>"))</p>
-<p>@Html.Raw(Model.Inserts.Replace(Environment.NewLine, "<br/>"))</p>
+<button class="btn btn-default" onclick="$('#tableDefinitions').toggle()">Show Definitions</button>
+<hr />
+<div id="tableDefinitions" style="display: none">
+    <p>@Html.Raw(Model.Creates.Replace(Environment.NewLine, "<br/>"))</p>
+    <p>@Html.Raw(Model.Inserts.Replace(Environment.NewLine, "<br/>"))</p>
+    <hr />
+</div>
+<p><b>Errors: </b></p>
+<p>@Html.ValidationSummary(false)</p>
+<hr />
+
+
 <form asp-action="Create">
     <div class="form-horizontal">
-        <h4>My Solving</h4>
-        <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
             <label asp-for="MySolving" class="col-md-2 control-label"></label>
@@ -31,15 +38,12 @@
         <input type="hidden" asp-for="Name" class="form-control" />
         <input type="hidden" asp-for="Description" class="form-control" />
 
-        <hr />
-        <p><b>Errors: </b></p>
-        <p>@Html.ValidationSummary(false)</p>
-        <hr />
+        
 
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Send" class="btn btn-default" />
             </div>
         </div>
     </div>

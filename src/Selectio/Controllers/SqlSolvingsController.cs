@@ -51,7 +51,7 @@ namespace Selectio.Controllers
         {
             var mySolvedTasksIds = _context.SqlSolvings
                 .Where(s => s.ApplicationUserId == Me.Id && s.IsCorrect)
-                .Select(s => s.Id)
+                .Select(s => s.SqlTaskId)
                 .ToArray();
 
             var model = _context.SqlTasks.Select(t => new SqlTaskViewModel
@@ -128,7 +128,7 @@ namespace Selectio.Controllers
 
             var myOutput = "";
             _sandboxService.TryExecuteQuery(completeQuery, ref myOutput);
-            
+            _sandboxService.FlushDatabase();
             if (myOutput == sqlTask.SolvingOutput)
             {
                 newSolving.IsCorrect = true;

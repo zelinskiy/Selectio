@@ -1,0 +1,13 @@
+@model IEnumerable<Selectio.Models.Message>
+
+@{
+    ViewData["Title"] = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Total: @Model.Count()</h3>
+
+@foreach (var m in Model)
+{
+    <p>@m.Text</p>
+}
