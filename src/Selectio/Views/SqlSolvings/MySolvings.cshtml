@@ -1,0 +1,45 @@
+@model IEnumerable<Selectio.Models.SqlSolving>
+@{
+    ViewData["Title"] = "AllSOlvings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Solvings</h2>
+<h3>Total: @Model.Count()</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Is Correct
+            </th>
+            <th>
+                Solved At
+            </th>
+            <th>
+                Solving
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsCorrect)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SolvedAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Solving)
+                </td>
+                <td>
+                    <a asp-controller="SqlSolvings" asp-action="Create" asp-route-id="@item.SqlTaskId">Task</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

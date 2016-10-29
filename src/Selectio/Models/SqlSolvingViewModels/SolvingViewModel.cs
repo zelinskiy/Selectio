@@ -12,10 +12,9 @@ namespace Selectio.Models.SqlSolvingViewModels
 
         public int SqlTaskId { get; set; }
 
-        [Required]
+        public string Name { get; set; }
+        public string Description { get; set; }
         public string Creates { get; set; }
-
-        [Required]
         public string Inserts { get; set; }
 
         //For Solving

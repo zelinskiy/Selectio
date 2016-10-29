@@ -1,41 +1,37 @@
 @model IEnumerable<Selectio.Models.SqlSolving>
-
+@inject UserManager<ApplicationUser> _userManager
 @{
     ViewData["Title"] = "AllSOlvings";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>AllSOlvings</h2>
+<h2>Solvings</h2>
+<h3>Total: @Model.Count()</h3>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ApplicationUserId)
+                User
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IsCorrect)
+                Is Correct
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SolvedAt)
+                Solved At
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Solving)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SqlTaskId)
+                Solving
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
+        
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.ApplicationUserId)
+                @(await _userManager.FindByIdAsync(item.ApplicationUserId))
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IsCorrect)
@@ -47,12 +43,8 @@
                 @Html.DisplayFor(modelItem => item.Solving)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SqlTaskId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-controller="SqlTasks" asp-action="Detail" asp-route-id="@item.SqlTaskId">Task</a> | 
+                <a asp-controller="Users" asp-action="Details" asp-route-id="@item.ApplicationUserId">User</a>
             </td>
         </tr>
 }

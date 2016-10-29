@@ -1,0 +1,69 @@
+@model Selectio.Models.SqlTask
+
+@{
+    ViewData["Title"] = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Detail</h2>
+
+<div>
+    <h4>Sql Task</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd>
+            @Html.Raw(Model.Description.Replace(Environment.NewLine, "<br/>"))
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Creates)
+        </dt>
+        <dd>
+            @Html.Raw(Model.Creates.Replace(Environment.NewLine, "<br/>"))
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Inserts)
+        </dt>
+        <dd>
+            @Html.Raw(Model.Inserts.Replace(Environment.NewLine, "<br/>"))
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Solving)
+        </dt>
+        <dd>
+            @Html.Raw(Model.Solving.Replace(Environment.NewLine, "<br/>"))
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.SolvingOutput)
+        </dt>
+        <dd>
+            @Html.Raw(Model.SolvingOutput.Replace(Environment.NewLine, "<br/>"))
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.IsWriteAction)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.IsWriteAction)
+        </dd>
+        
+        
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

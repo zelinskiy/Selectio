@@ -15,10 +15,10 @@ namespace Selectio.Services
         {
             this.connectionString = connectionString;
         }
+        
 
-        public bool TryExecuteQuery(
-            string query,
-            ref string output)
+
+        public bool TryExecuteQuery(string query, ref string output)
         {
             using (var con = new SqlConnection(connectionString))
             {
@@ -28,18 +28,8 @@ namespace Selectio.Services
                     var command = new SqlCommand(query, con);
                     using (command)
                     {
-                        var rows = readAllRows(command.ExecuteReader());
-
-                        output = "";
-                        foreach (var r in rows)
-                        {
-                            var t = new List<string>();
-                            for (int i = 0; i < r.FieldCount; i++)
-                            {
-                                t.Add(r[i].ToString());
-                            }
-                            output += "(" + string.Join(",", t) + ")\n";
-                        }
+                        var rows = ReadAllRows(command.ExecuteReader());
+                        output = string.Join("\n", RowsToStrings(rows));
                         return true;
                     }
                 }
@@ -67,13 +57,13 @@ BEGIN
 END
 
 ";
-            var output = "";
-            TryExecuteQuery(flushQuery, ref output);
-            return output;
+            var outp = "";
+            TryExecuteQuery(flushQuery, ref outp);
+            return outp;
         }
 
 
-        private static IEnumerable<IDataRecord> readAllRows(SqlDataReader reader)
+        private static IEnumerable<IDataRecord> ReadAllRows(SqlDataReader reader)
         {
             using (reader)
             {
@@ -81,6 +71,19 @@ END
                 {
                     yield return reader;
                 }
+            }
+        }
+
+        private static IEnumerable<string> RowsToStrings(IEnumerable<IDataRecord> rows)
+        {
+            foreach (var r in rows)
+            {
+                var t = new List<string>();
+                for (int i = 0; i < r.FieldCount; i++)
+                {
+                    t.Add(r[i].ToString());
+                }
+                yield return $"({string.Join(",", t)})";
             }
         }
 

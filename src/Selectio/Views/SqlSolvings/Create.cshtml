@@ -5,13 +5,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Create</h2>
+<h2>Solving</h2>
 
-<p>@Model.Creates</p>
-<p>@Model.Inserts</p>
-
-<p>@Html.ValidationSummary(false)</p>
-
+<p><b>Task:</b> @Model.Name</p>
+<p>@Html.Raw(Model.Description.Replace(Environment.NewLine, "<br/>"))</p>
+<hr/>
+<p>@Html.Raw(Model.Creates.Replace(Environment.NewLine, "<br/>"))</p>
+<p>@Html.Raw(Model.Inserts.Replace(Environment.NewLine, "<br/>"))</p>
 <form asp-action="Create">
     <div class="form-horizontal">
         <h4>My Solving</h4>
@@ -28,6 +28,14 @@
         <input type="hidden" asp-for="Creates" class="form-control"/>
         <input type="hidden" asp-for="Inserts" class="form-control" />
         <input type="hidden" asp-for="SqlTaskId" class="form-control" />
+        <input type="hidden" asp-for="Name" class="form-control" />
+        <input type="hidden" asp-for="Description" class="form-control" />
+
+        <hr />
+        <p><b>Errors: </b></p>
+        <p>@Html.ValidationSummary(false)</p>
+        <hr />
+
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">

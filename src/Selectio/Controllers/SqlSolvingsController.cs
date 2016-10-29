@@ -15,17 +15,17 @@ using Selectio.Services;
 namespace Selectio.Controllers
 {
     [Authorize]
-    public class SqlSolvingController : Controller
+    public class SqlSolvingsController : Controller
     {
 
-        private const string SEP = "\n\n\n";
+        private const string Sep = "\n\n\n";
 
         private readonly ApplicationDbContext _context;
         private readonly SandboxService _sandboxService;
         private readonly ILogger _logger;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public SqlSolvingController(
+        public SqlSolvingsController(
             ApplicationDbContext context,
             SandboxService sandboxService,
             ILoggerFactory loggerFactory,
@@ -34,7 +34,7 @@ namespace Selectio.Controllers
         {
             _context = context;
             _sandboxService = sandboxService;
-            _logger = loggerFactory.CreateLogger<SqlSolvingController>();
+            _logger = loggerFactory.CreateLogger<SqlSolvingsController>();
             _userManager = userManager;
         }
 
@@ -49,11 +49,24 @@ namespace Selectio.Controllers
 
         public IActionResult Index()
         {
+            var mySolvedTasksIds = _context.SqlSolvings
+                .Where(s => s.ApplicationUserId == Me.Id && s.IsCorrect)
+                .Select(s => s.Id)
+                .ToArray();
+
             var model = _context.SqlTasks.Select(t => new SqlTaskViewModel
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    Description = t.Description
+                })
+                .ToArray();
+
+            foreach (var t in model)
             {
-                Id = t.Id,
-            })
-            .ToArray();
+                t.IsSolved = mySolvedTasksIds.Contains(t.Id);
+            }
+            
             return View(model);
         }
 
@@ -71,7 +84,9 @@ namespace Selectio.Controllers
             {
                 SqlTaskId = sqlTask.Id,
                 Creates = sqlTask.Creates,
-                Inserts = sqlTask.Inserts
+                Inserts = sqlTask.Inserts,
+                Name = sqlTask.Name,
+                Description = sqlTask.Description
             };
 
             return View(model);
@@ -79,19 +94,19 @@ namespace Selectio.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(SolvingViewModel CreateViewModel)
+        public IActionResult Create(SolvingViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return View(CreateViewModel);
+                return View(model);
             }
 
             var sqlTask = _context.SqlTasks
-                .FirstOrDefault(t => t.Id == CreateViewModel.SqlTaskId);
+                .FirstOrDefault(t => t.Id == model.SqlTaskId);
             if (sqlTask == null)
             {
-                ModelState.AddModelError("task", $"Task {CreateViewModel.SqlTaskId} not found!");
-                return View(CreateViewModel);
+                ModelState.AddModelError("task", $"Task {model.SqlTaskId} not found!");
+                return View(model);
             }
 
             var newSolving = new SqlSolving
@@ -99,47 +114,64 @@ namespace Selectio.Controllers
                 SqlTaskId = sqlTask.Id,
                 IsCorrect = false,
                 ApplicationUserId = Me.Id,
-                Solving = CreateViewModel.MySolving,
+                Solving = model.MySolving,
                 SolvedAt = DateTime.Now
             };
             _context.SqlSolvings.Add(newSolving);
+            
+            
+            var completeQuery = model.Creates
+                                + Sep
+                                + model.Inserts
+                                + Sep
+                                + model.MySolving;
 
             var myOutput = "";
+            _sandboxService.TryExecuteQuery(completeQuery, ref myOutput);
             
-            var completeQuery = CreateViewModel.Creates
-                                + SEP
-                                + CreateViewModel.Inserts
-                                + SEP
-                                + CreateViewModel.MySolving;
-
-
-            if (_sandboxService.TryExecuteQuery(completeQuery, ref myOutput))
+            if (myOutput == sqlTask.SolvingOutput)
             {
-                if (myOutput == sqlTask.SolvingOutput)
-                {
-                    newSolving.IsCorrect = true;
-                    _context.SaveChanges();
-                    _sandboxService.FlushDatabase();
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    ModelState.AddModelError("sql", myOutput + "=/=" + sqlTask.SolvingOutput);
-                }
+                newSolving.IsCorrect = true;
+                _context.SaveChanges();
+                return RedirectToAction("Index");
             }
-            else
-            {
-                ModelState.AddModelError("sql", myOutput);
-            }
+            ModelState.AddModelError("sql", myOutput);
+
             _context.SaveChanges();
-            _sandboxService.FlushDatabase();
-            return View(CreateViewModel);
+            return View(model);
 
         }
 
+        [Authorize(Roles = "teacher")]
         public IActionResult AllSolvings()
         {
             var model = _context.SqlSolvings.ToArray();
+            return View(model);
+        }
+
+        [Authorize(Roles = "teacher")]
+        public IActionResult AllTaskSolvings(int id)
+        {
+            var model = _context.SqlSolvings
+                .Where(s=>s.IsCorrect && s.SqlTaskId == id)
+                .ToArray();
+            return View("AllSolvings", model);
+        }
+
+        [Authorize(Roles = "teacher")]
+        public IActionResult AllUserSolvings(string id)
+        {
+            var model = _context.SqlSolvings
+                .Where(s => s.IsCorrect && s.ApplicationUserId == id)
+                .ToArray();
+            return View("AllSolvings", model);
+        }
+
+        public IActionResult MySolvings()
+        {
+            var model = _context.SqlSolvings
+                .Where(s=>s.ApplicationUserId == Me.Id)
+                .ToArray();
             return View(model);
         }
     }
