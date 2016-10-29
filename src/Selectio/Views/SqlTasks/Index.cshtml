@@ -10,6 +10,11 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<p>
+    <form asp-area="" asp-action="FlushDatabase" method="post">
+        <button type="submit" class="btn btn-link navbar-btn navbar-link">Flush Sandbox Database</button>
+    </form>
+</p>
 <table class="table">
     <thead>
         <tr>

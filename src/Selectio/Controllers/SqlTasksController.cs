@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Selectio.Data;
 using Selectio.Models;
 using Selectio.Models.SqlTasksViewModels;
@@ -15,14 +16,17 @@ namespace Selectio.Controllers
 
         private readonly ApplicationDbContext _context;
         private readonly SandboxService _sandboxService;
+        private readonly ILogger _logger;
 
         public SqlTasksController(
             ApplicationDbContext context,
-            SandboxService sandboxService
+            SandboxService sandboxService,
+            ILoggerFactory loggerFactory
         )
         {
             _context = context;
             _sandboxService = sandboxService;
+            _logger = loggerFactory.CreateLogger<SqlTasksController>();
         }
 
         public IActionResult Index()
@@ -49,7 +53,7 @@ namespace Selectio.Controllers
                                 + CreateViewModel.Solving;
 
             var succeed = _sandboxService.TryExecuteQuery(completeQuery, ref output);
-            
+            _sandboxService.FlushDatabase();
             if (succeed)
             {
                 var newSqlTask = new SqlTask
@@ -70,8 +74,12 @@ namespace Selectio.Controllers
                 ModelState.AddModelError("sql", output);
                 return View(CreateViewModel);
             }
+        }
 
-            
+        [HttpPost]
+        public IActionResult FlushDatabase()
+        {
+            return Content(_sandboxService.FlushDatabase());
         }
     }
 }

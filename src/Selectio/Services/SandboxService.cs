@@ -28,8 +28,18 @@ namespace Selectio.Services
                     var command = new SqlCommand(query, con);
                     using (command)
                     {
-                        output = string.Join(",", readAllRows(command.ExecuteReader())
-                            .Select(r=>r.ToString()));
+                        var rows = readAllRows(command.ExecuteReader());
+
+                        output = "";
+                        foreach (var r in rows)
+                        {
+                            var t = new List<string>();
+                            for (int i = 0; i < r.FieldCount; i++)
+                            {
+                                t.Add(r[i].ToString());
+                            }
+                            output += "(" + string.Join(",", t) + ")\n";
+                        }
                         return true;
                     }
                 }
@@ -41,33 +51,9 @@ namespace Selectio.Services
             }
         }
 
-        public void FlushDatabase()
+        public string FlushDatabase()
         {
             var flushQuery = @"
-/* Drop all Foreign Key constraints */
-
-DECLARE @name VARCHAR(128)
-DECLARE @constraint VARCHAR(254)
-DECLARE @SQL VARCHAR(254)
-
-SELECT @name = (SELECT TOP 1 TABLE_NAME FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE constraint_catalog=DB_NAME() AND CONSTRAINT_TYPE = 'FOREIGN KEY' ORDER BY TABLE_NAME)
-
-WHILE @name is not null
-BEGIN
-    SELECT @constraint = (SELECT TOP 1 CONSTRAINT_NAME FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE constraint_catalog=DB_NAME() AND CONSTRAINT_TYPE = 'FOREIGN KEY' AND TABLE_NAME = @name ORDER BY CONSTRAINT_NAME)
-    WHILE @constraint IS NOT NULL
-    BEGIN
-        SELECT @SQL = 'ALTER TABLE [dbo].[' + RTRIM(@name) +'] DROP CONSTRAINT [' + RTRIM(@constraint) +']'
-        EXEC (@SQL)
-        PRINT 'Dropped FK Constraint: ' + @constraint + ' on ' + @name
-        SELECT @constraint = (SELECT TOP 1 CONSTRAINT_NAME FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE constraint_catalog=DB_NAME() AND CONSTRAINT_TYPE = 'FOREIGN KEY' AND CONSTRAINT_NAME <> @constraint AND TABLE_NAME = @name ORDER BY CONSTRAINT_NAME)
-    END
-SELECT @name = (SELECT TOP 1 TABLE_NAME FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE constraint_catalog=DB_NAME() AND CONSTRAINT_TYPE = 'FOREIGN KEY' ORDER BY TABLE_NAME)
-END
-GO
-
-/* Drop all Tables */
-
 DECLARE @name VARCHAR(128)
 DECLARE @SQL VARCHAR(254)
 
@@ -79,10 +65,11 @@ BEGIN
     EXEC (@SQL)
     SELECT @name = (SELECT TOP 1 [name] FROM sysobjects WHERE [type] = 'U' AND category = 0 AND [name] > @name ORDER BY [name])
 END
-GO
+
 ";
             var output = "";
             TryExecuteQuery(flushQuery, ref output);
+            return output;
         }
 
 
